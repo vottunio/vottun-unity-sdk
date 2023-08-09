@@ -1,7 +1,3 @@
----
-id: gaming
----
-
 # Gaming SDK 🎮 
 
 <p>Welcome to the documentation of the Vottun Gaming SDK! This powerful SDK enables web3 login, IPFS file uploads, and NFT operations (minting, transfers, metadata retrieval, etc.) for seamless integration into your Unity projects. Enhance your gaming experience with secure and decentralized blockchain functionalities. Let's get started!</p>
