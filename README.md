@@ -97,7 +97,7 @@ Once you have the QRImage where you want to, navigate again to **Assets -> Vottu
 - **Wallet Event Manager:** Centralize all the Events of the connection of the MetaMask SDK so you will be able to subscribe to all the events in a simpler way than with only the MetaMask SDK.
 
 
-> :warning: ***The event “addressAvailable” has the wallet address on its args, you must subscribe to this event in order to get the player’s wallet address.***
+> :warning: ***The event **“signValidated”** of the class **"WalletEventManager"** has the player's **wallet address** on its args, which are of type **"SignValidatedSuccesfully"** and has the attribute **"walletAddress"**, you must subscribe to this event in order to get the player’s wallet address.***
 
 The last step of the setup is to go to the “Meta Mask Unity Transport Broadcaster” and add the QRImage prefab of the scene to its “Listeners” array.
 
