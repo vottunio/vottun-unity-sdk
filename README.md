@@ -679,7 +679,6 @@ The class "TextAttribute" is a custom class which represents a text trait of a N
 You can create a object of this class like this:
 
 ```cs
-//With max value
 TextAttribute textAttribute = new TextAttribute("traitType", "traitValue")
 ```
 
