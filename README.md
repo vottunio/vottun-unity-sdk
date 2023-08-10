@@ -27,7 +27,7 @@ Once it is imported, you will notice a new tab on the top of the screen called �
 A popup window will appear, it is the package installer window, where you will install all the dependencies needed by the MetaMask SDK and the Vottun SDK. Click “install” on both dependencies, Newtonsoft.Json and JAR Resolver, once they are installed click the "Install VottunSDK" button and the installation of the main package will begin.
 
 
-> :warning: ***You can import the demo once you install the VottunSDK, a button named "Install Demo" will appear under "Install VottunSDK" ***
+> :warning: ***You can import the demo once you install the VottunSDK, a button named "Install Demo" will appear under "Install VottunSDK"***
 
 
 
