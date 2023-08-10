@@ -1,4 +1,4 @@
-# Gaming SDK 🎮 
+# Gaming SDK 🎮
 
 <p>Welcome to the documentation of the Vottun Gaming SDK! This powerful SDK enables web3 login, IPFS file uploads, and NFT operations (minting, transfers, metadata retrieval, etc.) for seamless integration into your Unity projects. Enhance your gaming experience with secure and decentralized blockchain functionalities. Let's get started!</p>
 
@@ -24,7 +24,11 @@ Your first step is to import the Vottun SDK as any other .unitypackage
 
 Once it is imported, you will notice a new tab on the top of the screen called “Tools”, you will have to navigate to **Tools -> VottunSDK -> Install**.
 
-A popup window will appear, it is the package installer window, where you will install all the dependencies needed by the MetaMask SDK and the Vottun SDK. Click “install” on both dependencies, Newtonsoft.Json and JAR Resolver, once they are installed click the Install VottunSDK button and the installation of the main package will begin.
+A popup window will appear, it is the package installer window, where you will install all the dependencies needed by the MetaMask SDK and the Vottun SDK. Click “install” on both dependencies, Newtonsoft.Json and JAR Resolver, once they are installed click the "Install VottunSDK" button and the installation of the main package will begin.
+
+
+> :warning: ***You can import the demo once you install the VottunSDK, a button named "Install Demo" will appear under "Install VottunSDK" ***
+
 
 
 > :warning: ***The following error may occur, but you can ignore it:***
@@ -42,7 +46,6 @@ The next step is to configure the MetaMask SDK so when the player connects his w
 
 On the tabs navigate to **Window -> MetaMask -> Setup Window** and the MetaMask Setup popup window will appear, go to “credentials” and change the “App Name” and “App URL” fields to the name and url of your project, next uncheck the “Deep Linking” option and click on “Apply Settings”, once you are done you can close the MetaMask Setup window.
 
-
 > :warning: ***This is the basic configuration to work properly with the Vottun SDK, you can configure the MetaMask SDK as you want but may create problems on the compatibility between Vottun SDK and MetaMask SDK.***
 
 Now, on the project folders, navigate to **Assets -> VottunSDK -> VottunUnity -> VottunSdkConfig -> Resources**. Here you will find three scriptable objects used for configuration of the Vottun SDK.
@@ -51,10 +54,7 @@ The first scriptable object is called “Gaming Api Config”, and it's where yo
 - **Gaming JWT:** The JWT token given by Vottun
 - **Gaming Url:** The URL of the Gaming Api
 
-
-> :warning: ***The Gaming API URL at this moment is: https://intapi.vottun.tech/game/v1
-If it changes in the future, this message will be updated with the new URL***
-
+> :warning: ***The Gaming API URL at this moment is: https://intapi.vottun.tech/game/v1 If it changes in the future, this message will be updated with the new URL***
 
 The second scriptable object is called “Sign Message Config”, and it’s where you will configure the message that will show on the player’s wallet when the Web3 login process occurs, the player will use this message to confirm that the connection is secure and not any kind of scam or impersonation, so the message has to be clear and explain the use of all of the player’s information.
 - **Domain:** The domain of your project.
@@ -74,9 +74,7 @@ The third scriptable object is called “Wallet Connection Config”, and it’s
 - **Network Block Explorer Urls:** An string array, where each string is a URL to a blockexplorer of the network where your project is.
 - **Network Icon Urls:** An string array, where each string is a URL to an icon of the network where your project is.
 
-
 > :warning: ***The default configuration when you install the SDK is valid for the Avalanche Fuji Testnet***
-
 
 > :warning: ***The Network Icon Urls field is optional and you can leave it as an empty array if you want, for all the other fields, you can find the needed information on websites like https://chainlist.org***
 
@@ -95,7 +93,6 @@ Once you have the QRImage where you want to, navigate again to **Assets -> Vottu
 - **Meta Mask Unity:** The main script of the MetaMask SDK, here you can select if initialize the MetaMask SDK on the Start of the scene or initialize it manually.
 - **Meta Mask Unity Transport Broadcaster:** Loads the QR on the listener assigned to it.
 - **Wallet Event Manager:** Centralize all the Events of the connection of the MetaMask SDK so you will be able to subscribe to all the events in a simpler way than with only the MetaMask SDK.
-
 
 > :warning: ***The event **“signValidated”** of the class **"WalletEventManager"** has the player's **wallet address** on its args, which are of type **"SignValidatedSuccesfully"** and has the attribute **"walletAddress"**, you must subscribe to this event in order to get the player’s wallet address.***
 
@@ -165,16 +162,16 @@ Then you should start the coroutine **"BalanceOf"** inside the **"gamingApi"** c
 Here is an example of how it should be implemented to print on the console the **ammount** of a specific NFT that the player has in his wallet:
 
 ```cs title=apiHandler.cs
-private void callGetBalance()
+public void CallBalanceOf()
 {
     StartCoroutine(BalanceOf("contractAddress", "networkId", walletAddress, "nftId"));
 }
 
-IEnumerator BalanceOf(string contract, string network, string address, string id)
+private IEnumerator BalanceOf(string contractAddress, string networkId, string walletAaddress, string nftId)
 {
     int resultBalance = 0;
-    
-    yield return StartCoroutine(gamingApi.BalanceOfNft(balance => resultBalance = balance, contract, network, address, id));
+
+    yield return StartCoroutine(gamingApi.BalanceOfNft(balance => resultBalance = balance, contractAddress, networkId, walletAaddress, nftId));
 
     OnBalanceRecived(resultBalance);
 }
@@ -218,13 +215,13 @@ private void callTokenUri()
     StartCoroutine(TokenUri("contractAddress", "networkId", "nftId"));
 }
 
-IEnumerator TokenUri(string contract, string network, string id)
+IEnumerator TokenUri(string contractAddress, string networkId, string nftId)
 {
     string resultUri = "";
 
-    yield return StartCoroutine(gamingApi.TokenUri(uri => resultUri = uri, contract, network, id));
+    yield return StartCoroutine(gamingApi.TokenUri(uri => resultUri = uri, contractAddress, networkId, nftId));
 
-    OnTokenUriRecived(resultUri);    
+    OnTokenUriRecived(resultUri);
 }
 
 private void OnTokenUriRecived(string uri)
@@ -274,12 +271,12 @@ private void CallMint()
     StartCoroutine(Mint("contractAddress", 0, "walletAddress", 5, "nftUri"));
 }
 
-IEnumerator Mint(string contract, int network, string walletAddress, int amount, string uri)
+IEnumerator Mint(string contractAddress, int networkId, string walletAddress, int amount, string metadataUri)
 {
     string responseTxHash = "";
     string responseNonce = "";
 
-    yield return StartCoroutine(gamingApi.Mint(t => responseTxHash = t, n => responseNonce = n, contract, network, walletAddress, amount, uri));
+    yield return StartCoroutine(gamingApi.Mint(t => responseTxHash = t, n => responseNonce = n, contractAddress, networkId, walletAddress, amount, metadataUri));
 
     OnNftMinted(responseTxHash, responseNonce);
 }
@@ -333,12 +330,12 @@ private void CallMintBatch()
     StartCoroutine(MintBatch("contractAddress", 0, walletAddress, ammounts, uris));
 }
 
-IEnumerator MintBatch(string contract, int network, string walletAddress, int[] amounts, string[] uris)
+IEnumerator MintBatch(string contractAddress, int networkId, string walletAddress, int[] amounts, string[] metadataUris)
 {
     string responseTxHash = "";
     string responseNonce = "";
 
-    yield return StartCoroutine(gamingApi.MintBatch(t => responseTxHash = t, n => responseNonce = n, contract, network, walletAddress, amounts, uris));
+    yield return StartCoroutine(gamingApi.MintBatch(t => responseTxHash = t, n => responseNonce = n, contractAddress, networkId, walletAddress, amounts, metadataUris));
 
     OnMultipleNftsMinted(responseTxHash, responseNonce);
 }
@@ -396,14 +393,14 @@ private void CallTransfer()
     StartCoroutine(Transfer("contractAddress", 0, "projectWalletAddress", walletAddress, 0, 5));
 }
 
-IEnumerator Transfer(string contract, int network, string originWalletAddress, string destinationWalletAddress, int id, int amount)
+IEnumerator Transfer(string contractAddress, int networkId, string originWalletAddress, string destinationWalletAddress, int nftId, int amount)
 {
     string responseTxHash = "";
     string responseNonce = "";
 
-    yield return StartCoroutine(gamingApi.Transfer(i => responseTxHash = i, n => responseNonce = n, contract, network, originWalletAddress, destinationWalletAddress, id, amount));
+    yield return StartCoroutine(gamingApi.Transfer(i => responseTxHash = i, n => responseNonce = n, contractAddress, networkId, originWalletAddress, destinationWalletAddress, nftId, amount));
 
-    OnNftTransferred(responseTxHash, responseNonce)
+    OnNftTransferred(responseTxHash, responseNonce);
 }
 
 private void OnNftTransferred(string txHash, string nonce)
@@ -459,12 +456,12 @@ private void CallTransferBatch()
     StartCoroutine(TransferBatch("contractAddress", 0, "projectWalletAddress", walletAddress, ids, ammounts));
 }
 
-IEnumerator TransferBatch(string contract, int network, string originWalletAddress, string destinationWalletAddress, int[] ids, int[] amounts)
+IEnumerator TransferBatch(string contractAddress, int networkId, string originWalletAddress, string destinationWalletAddress, int[] nftIds, int[] amounts)
 {
     string responseTxHash = "";
     string responseNonce = "";
 
-    yield return StartCoroutine(gamingApi.TransferBatch(i => responseTxHash = i, n => responseNonce = n, contract, network, originWalletAddress, destinationWalletAddress, ids, amounts));
+    yield return StartCoroutine(gamingApi.TransferBatch(i => responseTxHash = i, n => responseNonce = n, contractAddress, networkId, originWalletAddress, destinationWalletAddress, nftIds, amounts));
 
     OnMultipleNftsTransferred(responseTxHash, responseNonce);
 }
@@ -504,13 +501,13 @@ private void CallUploadFile()
     StartCoroutine(UploadFile("filePath", "fileName"));
 }
 
-IEnumerator UploadFile(string path, string filename)
+IEnumerator UploadFile(string filePath, string fileName)
 {
     string resultHash = "";
 
-    yield return StartCoroutine(gamingApi.UploadFile(h => resultHash = h, path, filename));
+    yield return StartCoroutine(gamingApi.UploadFile(h => resultHash = h, filePath, fileName));
 
-    Debug.Log(resultHash);
+    OnFileUploaded(resultHash);
 }
 
 private void OnFileUploaded(string hash)
@@ -552,11 +549,11 @@ private void CallUploadBasicMetadata()
     StartCoroutine(UploadBasicMetadata("nftName", "nftFileUri", "nftDescription"));
 }
 
-IEnumerator UploadBasicMetadata(string name, string fileUri, string description)
+IEnumerator UploadBasicMetadata(string nftName, string nftFileUri, string nftDescription)
 {
     string resultHash = "";
 
-    yield return StartCoroutine(gamingApi.UploadBasicMetadata(h => resultHash = h, name, fileUri, description));
+    yield return StartCoroutine(gamingApi.UploadBasicMetadata(h => resultHash = h, nftName, nftFileUri, nftDescription));
 
     OnBasicMetadataUploaded(resultHash);
 }
@@ -632,11 +629,11 @@ private void CallUploadMetadataWithNumericAttributes()
     StartCoroutine(UploadMetadataWithNumericAttributes("nftName", "nftFileUri", "nftDescription", attributes));
 }
 
-IEnumerator UploadMetadataWithNumericAttributes(string name, string fileUri, string description, NumericAttribute[] attributes)
+IEnumerator UploadMetadataWithNumericAttributes(string nftName, string nftFileUri, string nftDescription, NumericAttribute[] nftAttributes)
 {
     string resultHash = "";
 
-    yield return StartCoroutine(gamingApi.UploadMetadataWithNumericAttributes(h => resultHash = h, name, fileUri, description, attributes));
+    yield return StartCoroutine(gamingApi.UploadMetadataWithNumericAttributes(h => resultHash = h, nftName, nftFileUri, nftDescription, nftAttributes));
 
     OnMetadataWithNumericAttributesUploaded(resultHash);
 }
