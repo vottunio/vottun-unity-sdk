@@ -111,6 +111,58 @@ All the functions of the API are methods in the GamingApi class (**Assets -> Vot
 <br/>
 <br/>
 
+## Gaming Demo
+
+### Install the demo
+
+Once you have installed the Vottun SDK, a button called **"Install Demo"** will appear in the **instalation window*, if you click it, a scene called **"Demo_VottunSDK"** will appear on your scenes folder, and a **"Demo"** folder will appear in the **"VottunSDK"** folder.
+
+Inside the **"Demo"** folder will be the scripts used on the **"Demo_VottunSDK"** scene, so you can read the code if you're lost and want to know how to use a specific function of the SDK.
+
+<br/>
+
+### Demo usage
+
+When you start the **Demo Scene** a text will appear reminding you to configure the SDK and where to do it and a button to confirm that your SDK is correctly configured.
+
+Then a **QR code** will appear on your screen, this is the QR code that you should **scan with your MetaMask App** in order to connect your wallet to your project to get your wallet address and use all the SDK functions.
+
+Once you connect your wallet to the project, the QR code will disappear and the **Demo** will finally appear. At the **top right** corner of the screen you will see a dropdown menu where you can select the function of the SDK that you wanna test. When you select one, you will see on the screen the fields that the specific function needs in order to work, you should complete the fields with the correct information asked on each field and then click the button placed in the bottom center of the screen to execute the function, and the result will show on the screen and in the console so you can copy paste the results easily.
+
+<br/>
+
+### Demo structure
+
+The main class that you will be looking is **"ApiHandler"**, you can find it attached to the **"ApiHandler"** gameObject or in **Assets -> VottunSDK -> Demo -> Scripts**. Here you will see that the functionalities are divided by regions, where each region is an SDK function (except the "Variables" and "Initialization Methods" regions).
+
+All the regions have the same structure:
+- The first function is always the one that the button of the specific SDK function calls, it constructs the objects that the function will need (if it needs specific objects) and starts the corrutine that will call the SDK.
+- The second function is always the one that calls the SDK passing all the data needed and when the API responds, it calls the next function that executes the logic with the response.
+- The third function is always the one that handles the logic with the response that the API gives us, in this case, it prints it onto the screen and the Unity console. 
+
+Here is an example:
+
+```cs
+public void CallBalanceOf() {
+    StartCoroutine(BalanceOf(balanceOfContractAddresInput.text, balanceOfNetworkIdInput.text, walletAddress, balanceOfNftIdInput.text));
+}
+
+private IEnumerator BalanceOf(string contractAddress, string networkId, string walletAaddress, string nftId) {
+    int resultBalance = 0;
+
+    yield return StartCoroutine(gamingApi.BalanceOfNft(balance => resultBalance = balance, contractAddress, networkId, walletAaddress, nftId));
+
+    OnBalanceRecived(resultBalance);
+}
+
+private void OnBalanceRecived(int balance) {
+    balanceOfResultText.text = $"The player has {balance} of this NFT";
+}
+```
+
+<br/>
+<br/>
+
 ## SDK methods
 
 Let’s assume that the address of the player’s wallet is stored in a static class called “playerData” and that all the methods are called in a script name **ApiHandler.cs** that will only handle the calls to the API.
